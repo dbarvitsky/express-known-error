@@ -1,0 +1,22 @@
+{
+  "name": "error-middleware",
+  "version": "1.0.0",
+  "description": "\"Sample application to demonstrate KnownError in express\"",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "node-jasmine ./spec/"
+  },
+  "keywords": [
+    "express",
+    "known-error",
+    "middleware",
+    "demo"
+  ],
+  "author": "Daniil Barvitsky",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0"
+  }
+}
