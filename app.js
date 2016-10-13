@@ -29,7 +29,7 @@ app.use(require('./modules/example1/example1.routes'));
 
 // Handle all sorts of errors and return properly formatted
 // error message in JSON
-app.use(require('./modules/middleware/error-middleware'));
+app.use(require('./modules/middleware/error-middleware')(/*default options*/));
 
 // Fall-back into 404
 app.use(function(req,res) {

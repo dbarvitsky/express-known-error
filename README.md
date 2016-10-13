@@ -74,9 +74,9 @@ new Promise( function(resolve,reject) {
     ...
     fail( new errors.AccessDeniedError({ user: self.name, missingRole: role })));
 })
-
+//... or, but not recommended, because you are going to lose the stack trace:
+    throw { code: '31142', ... }
 ```
 
 # TBD
-* Polifill from pojo errors. When user throws a `{code: 12345}` pojo exception, service shall apply the exception logic according to code or error name. Fairly trivial.
 * Support nested errors and error causes. For example `throw new errors.AccessDeniedError({...}).from('partner-api',response)`.

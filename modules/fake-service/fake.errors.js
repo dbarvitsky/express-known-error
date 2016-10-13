@@ -14,5 +14,14 @@ module.exports = require('../errors/error.service.js').defineErrors(
            user : { required: true, expose: true, exposeAs : "userName" },
            missingRole: { reqired: false, expose: false }
        }
+   },
+   
+   BecauseICanError: {
+       code: "42",
+       status: "418",
+       message: "${message|Some dummy just threw a error 33142 without message.}",
+       parameters : {
+           message : { required: false, expose: true, exposeAs : "originalErrorMessage" }
+       }
    }
 });

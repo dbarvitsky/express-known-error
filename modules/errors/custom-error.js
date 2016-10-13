@@ -23,10 +23,10 @@ function substitute( template, variables, defaultValue ) {
     return result;
 }
 
-function CustomError(options,detail) {
+function CustomError(options,detail,boundary) {
     this.options = options || {};
     this.detail = detail || {};
-    Error.captureStackTrace(this, this.constructor);
+    Error.captureStackTrace(this, boundary || this.constructor);
 
     for (var name in this.options.parameters) {
         var param = this.options.parameters[name];
@@ -59,12 +59,18 @@ function customErrorFactory(errorName,errorCode,options,base) {
     
     util.inherits(result,base);
 
+    // We want these to be available as static properties and also as
+    // instance properties:
+    Object.defineProperty(result,"code",{ value: errorCode, writable: false });
+    Object.defineProperty(result,"name",{ value: errorName, writable: false });
+    Object.defineProperty(result,"status",{ value: options.status, writable: false });
+    Object.defineProperty(result,"source",{ value: options.module, writable: false });
+    
     Object.defineProperty(result.prototype,"code",{ value: errorCode, writable: false });
     Object.defineProperty(result.prototype,"name",{ value: errorName, writable: false });
     Object.defineProperty(result.prototype,"status",{ value: options.status, writable: false });
     Object.defineProperty(result.prototype,"source",{ value: options.module, writable: false });
     
-
     return result;
 }
 

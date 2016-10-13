@@ -1,8 +1,6 @@
 'use static';
-const util = require('util');
-const CustomError = require('./custom-error').CustomError;
 const customErrorFactory = require('./custom-error').customErrorFactory;
-const rx_path = /.*[\\\/]/gm
+const rx_path = /.*[\\\/]/gm;
 const getHashCode = require('./hashcode');
 
 var knownErrors = {
@@ -46,16 +44,40 @@ module.exports = {
         detail.stackTrace = error.stack;
         if (error)
         {
+            var knownError, code, name;
+            
+            if (error.isKnownError) knownError = error;
+            else {
+                /* This is not a known error. Maybe we can build one? */
+                code = error.code || error.errorCode || error.statusCode || error.status;
+                name = error.name;
+                var proxyExceptionClass;
+                if (code) proxyExceptionClass = knownErrors.byCode[code];
+                if (!proxyExceptionClass && name) proxyExceptionClass = knownErrors.byName[name];
+                
+                if (proxyExceptionClass) {
+                    try {
+                        // Specify error constructor as boundary of stack trace, maybe we can:
+                        knownError = new proxyExceptionClass(error,error.constructor);
+                    } catch (e) {
+                        console.warn('Cloud not construct the error object by class by error code "',code,'" or error class name "',name,'"');
+                    }
+                } else if (code || name) {
+                    console.warn('Cloud not find a suitable the error class by class by error code "',code,'" or error class name "',name,'"');
+                }
+            }
+            
             /* Known error - generate JSON and return */
-            if (error.isKnownError) {
-                var errorObj = error.toJSON();
+            if (knownError) {
+                var errorObj = knownError.toJSON();
                 errorObj.detail = detail;
-                errorObj.status = error.status;
+                errorObj.status = knownError.status;
                 return errorObj;
             }
+            
             /* Try to polyfill from common error types.*/
             var fallback = {
-                code : error.code || error.statusCode,
+                code : code,
                 errorMessage: error.message || 'Internal Server Error',
                 source : error.source || null,
                 detail: detail

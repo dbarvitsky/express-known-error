@@ -63,7 +63,7 @@ module.exports = {
     },
     pojoAsyncError: function() {
         return waitSome().then(function() {
-            throw { code: '42', message: 'Just because I can' };
+            throw { code: errors.BecauseICanError.code, message: 'Just because I can' };
         });
     },
     userContextPass: function(user,message) {
