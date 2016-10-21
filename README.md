@@ -72,7 +72,7 @@ throw new errors.AccessDeniedError({ user: self.name, missingRole: role }));
 //... or
 new Promise( function(resolve,reject) {
     ...
-    fail( new errors.AccessDeniedError({ user: self.name, missingRole: role })));
+    reject( new errors.AccessDeniedError({ user: self.name, missingRole: role })));
 })
 //... or, but not recommended, because you are going to lose the stack trace:
     throw { code: '31142', ... }
