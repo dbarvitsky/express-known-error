@@ -78,5 +78,41 @@ new Promise( function(resolve,reject) {
     throw { code: '31142', ... }
 ```
 
-# TBD
-* Support nested errors and error causes. For example `throw new errors.AccessDeniedError({...}).from('partner-api',response)`.
+## Error sources
+The error sources are utility functions to help populate the error parameters. For instance,
+if you are making a call to an HTTP service and it responds with an error in its own format,
+you will often find yourself doing things like:
+```
+    if (response.data.code === 90542) {
+        throw new errors.MyCustomError({ reasonCode: response.data.code, reasonMessage: response.data.message });
+    } else {
+        ...
+    }
+```
+Of course you don't want that so you will have some function like:
+```
+function parseErrorResponse(response) {
+    var error;
+    if (...) {
+    ...
+    }
+    return error;
+}
+```
+Since we have custom errors now, it can be done simpler. You can put all that logic of extracting error parameters
+from responses into a separate function and call it where you throw the error more elegantly:
+```
+// in main app:
+require('./modules/errors/error-source').register('partner-api', function(error,response) {
+    // parse through response and populate the error here:
+    error.detail.reasonCode = response.data....;
+    error.detail.reasonMessage = ...;
+});
+
+// and now in your module:
+var response = ...;
+...
+throw new errors.MyCustomError().from('partner-api',response);
+```
+
+See example in `./modules/fake-service/fake.service.js#responseErrorAsync`
