@@ -89,6 +89,17 @@ module.exports = {
         return waitSome().then( function(){
             throw new httpErrors.ImATeapot();
         });
+    },
+    responseErrorAsync: function() {
+        return waitSome().then( function(){
+            var fake_response = {
+                error: true,
+                success: false,
+                code: -76,
+                message: "Not enough funds in your account to process the transaction"
+            };
+            throw new errors.AccountLockedError().from('partner-api',fake_response);
+        });
     }
 
 };

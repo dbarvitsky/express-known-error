@@ -27,6 +27,11 @@ app.use(require('./modules/middleware/async-middleware'));
 // Serve a simple service throwing various errors
 app.use(require('./modules/example1/example1.routes'));
 
+// Install the partner api error source so that we can populate error details
+// like throw new errors.AccessDeniedError({...}).from('partner-api',response)
+// This is an optional feature:
+require('./modules/example1/partner-api.error-source');
+
 // Handle all sorts of errors and return properly formatted
 // error message in JSON
 app.use(require('./modules/middleware/error-middleware')(/*default options*/));

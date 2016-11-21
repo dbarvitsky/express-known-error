@@ -23,5 +23,15 @@ module.exports = require('../errors/error.service.js').defineErrors(
        parameters : {
            message : { required: false, expose: true, exposeAs : "originalErrorMessage" }
        }
+   },
+   
+   AccountLockedError: {
+       status: "403",
+       code: "40301",
+       message: "Account is locked - ${reasonMessage|please contact support}.",
+       parameters: {
+           reasonCode: { required: false, expose: true },
+           reasonMessage: { required: false, expose: true }
+       }
    }
 });

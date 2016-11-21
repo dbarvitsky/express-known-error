@@ -51,4 +51,10 @@ router.get('/api/example1/async/http-error',function( req,res,next){
     });
 });
 
+router.get('/api/example1/async/response-error',function( req,res,next){
+    res.serve( function(user) {
+        return service.responseErrorAsync();
+    });
+});
+
 module.exports = router;

@@ -36,6 +36,8 @@ function CustomError(options,detail,boundary) {
 }
 
 function customErrorFactory(errorName,errorCode,options,base) {
+    if (!errorName) throw new Error("The errorName parameter is required");
+    if (!errorCode) errorCode = getHashCode(errorName);
     if (!options) options = {};
     if (!base) base = CustomError;
     if (!options.parameters) options.parameters = {};
@@ -61,25 +63,25 @@ function customErrorFactory(errorName,errorCode,options,base) {
 
     // We want these to be available as static properties and also as
     // instance properties:
-    Object.defineProperty(result,"code",{ value: errorCode, writable: false });
-    Object.defineProperty(result,"name",{ value: errorName, writable: false });
-    Object.defineProperty(result,"status",{ value: options.status, writable: false });
-    Object.defineProperty(result,"source",{ value: options.module, writable: false });
     
-    Object.defineProperty(result.prototype,"code",{ value: errorCode, writable: false });
-    Object.defineProperty(result.prototype,"name",{ value: errorName, writable: false });
-    Object.defineProperty(result.prototype,"status",{ value: options.status, writable: false });
-    Object.defineProperty(result.prototype,"source",{ value: options.module, writable: false });
+    Object.defineProperties(result,{
+        "code": { value: errorCode, writable: false },
+        "name": { value: errorName, writable: false },
+        "status": { value: options.status, writable: false },
+        "source": { value: options.module, writable: false }
+    });
     
+    Object.defineProperties(result.prototype,{
+        "code": { value: errorCode, writable: false },
+        "name": { value: errorName, writable: false },
+        "status": { value: options.status, writable: false },
+        "source": { value: options.module, writable: false }
+    });
+
     return result;
 }
 
 util.inherits(CustomError,Error);
-
-Object.defineProperty(CustomError.prototype,"isKnownError",{
-    value: true,
-    writable: false
-});
 
 CustomError.prototype.getMessageText = function(context) {
     try {
@@ -111,10 +113,10 @@ CustomError.prototype.toJSON = function( context ) {
     return result;
 };
 
-Object.defineProperty(CustomError.prototype,"message",{
-    get: function() {
-        return this.getMessageText(null);
-    }
+
+Object.defineProperties(CustomError.prototype, {
+    "isKnownError": { value: true, writable: false },
+    "message": { get: function() { return this.getMessageText(null); } }
 });
 
 module.exports = {
